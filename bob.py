@@ -37,8 +37,6 @@ from random import randint
 
 
 def main(agents):
-    print("running Bob")
-
     # Initialize the connection
     with CQCConnection(agents[1]) as Bob:
 
@@ -84,7 +82,7 @@ def main(agents):
 
         m = qB.measure()
 
-        print("Bob received message", m)
+        print("\n==> Receiver received message", m)
 
 if __name__ == "__main__":
     main()

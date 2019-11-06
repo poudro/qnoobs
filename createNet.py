@@ -34,31 +34,33 @@ import math
 
 from cqc.pythonLib import CQCConnection, qubit
 
+import argparse
+
 import alice
 import bob
 import charlie
 from randombit import RandomBit
 
-# TODO(poudro): make this a cli parameter
-N_AGENTS = 4
-
-def createNet():
-	agents = ["agent%s" % (x) for x in range(N_AGENTS)]
+def createNet(n_agents):
+	agents = ["agent%s" % (x) for x in range(n_agents)]
 	n = simulaqron.network.Network(name="default", nodes=agents, force=True)
 	n.start()
 	n.running
 	return n, agents
 
 # TODO(poudro): move to seperate file
-def anonEntanglement(agents):
+def anonEntanglement(agents, send_bit):
 	threads = []
-	print(agents)
-	for a in range(N_AGENTS):
+	print("All nodes in network:", agents)
+	for a in range(len(agents)):
 		if a == 0:
-			threads.append(Thread(target = alice.main, args=(agents,)))
+			print("Sender (%s) is starting and is sending %s" % (agents[0], send_bit))
+			threads.append(Thread(target = alice.main, args=(agents, send_bit)))
 		elif a == 1:
+			print("Receiver (%s) is starting" % (agents[1],))
 			threads.append(Thread(target = bob.main, args=(agents,)))
 		else:
+			print("Other node (%s) is starting" % (agents[a],))
 			threads.append(Thread(target = charlie.main, args=(agents,a)))
 
 	for t in threads:
@@ -66,6 +68,7 @@ def anonEntanglement(agents):
 
 	for t in threads:
 		t.join()
+
 
 
 ### VERIFICATION
@@ -142,12 +145,18 @@ def verification(r, agents):
 if __name__ == '__main__':
 	# TODO(poudro): integrate entanglemet and verification steps as per protocol
 
+
+	parser = argparse.ArgumentParser()
+	parser.add_argument("--n_nodes", help="set number of nodes in network (>2)", default=3, type=int)
+	parser.add_argument("--s_bit_val", help="value to send from sender to receiver (0/1)", default=0, type=int, choices=[0,1])
+	args = parser.parse_args()
+
 	r = RandomBit()
-	n, agents = createNet()
+	n, agents = createNet(args.n_nodes)
 	# for i in range(50):
 	# 	verification(r, agents)
 
-	anonEntanglement(agents)
+	anonEntanglement(agents, args.s_bit_val)
 	# # ana()
 
 	# # # print(n.running)

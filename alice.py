@@ -35,9 +35,7 @@
 from cqc.pythonLib import CQCConnection, qubit
 from random import randint
 
-def main(agents):
-    print("running Alice")
-
+def main(agents, send_bit):
     # Initialize the connection
     with CQCConnection(agents[0]) as Alice:
         # Make an EPR pair with Bob
@@ -45,11 +43,9 @@ def main(agents):
 
         mCharlies = []
         for charlie in agents[2:]:
-            print("Alice receiving from Charlie", charlie)
             mCharlies.append(list(Alice.recvClassical())[0])
 
         b = randint(0, 1)
-        print('b', b)
         if b == 1:
             qA.Z()
 
@@ -57,17 +53,16 @@ def main(agents):
 
 
         q = qubit(Alice)
-        
+        if send_bit == 1:
+            q.X()
+
         q.cnot(qA)
         q.H()
 
-        print("qA", qA)
         aa = q.measure()
         ba = qA.measure()
 
         Alice.sendClassical(agents[1], [aa, ba])
-
-        print("Alice m", aa)
 
 
 

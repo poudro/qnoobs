@@ -36,8 +36,6 @@ from cqc.pythonLib import CQCConnection
 from simulaqron.toolbox.manage_nodes import NetworksConfigConstructor
 
 def main(agents, idx):
-    print("running Charlie", idx)
-
     # Initialize the connection
     with CQCConnection(agents[idx]) as Charlie:
 
