@@ -37,27 +37,7 @@ from cqc.pythonLib import CQCConnection, qubit
 import alice
 import bob
 import charlie
-
-
-# TODO(poudro): move to seperate file
-class RandomBit():
-	def __init__(self):
-		self.n = simulaqron.network.Network(name="randomBit", nodes=["randomBit"], force=True)
-		self.n.start()
-		self.n.running
-
-	def stop(self):
-		self.n.stop()
-
-	def get(self):
-		m = 0
-		with CQCConnection("randomBit", network_name="randomBit") as randomBit:
-			q = qubit(randomBit)
-			q.H()
-			m = q.measure()
-
-		return m
-
+from randombit import RandomBit
 
 # TODO(poudro): make this a cli parameter
 N_AGENTS = 4
@@ -160,12 +140,14 @@ def verification(r, agents):
 
 
 if __name__ == '__main__':
+	# TODO(poudro): integrate entanglemet and verification steps as per protocol
+
 	r = RandomBit()
 	n, agents = createNet()
-	for i in range(50):
-		verification(r, agents)
+	# for i in range(50):
+	# 	verification(r, agents)
 
-	# anonEntanglement(agents)
+	anonEntanglement(agents)
 	# # ana()
 
 	# # # print(n.running)
